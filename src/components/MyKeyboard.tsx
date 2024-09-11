@@ -19,6 +19,14 @@ export default function MyKeyboard() {
   const [lastOperation, setLastOperation] = useState<string | null>(null);
   const [isResult, setIsResult] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const scrollViewRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to the end whenever the value changes
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({animated: true});
+    }
+  }, [value]);
 
   //@ts-ignore
   const handlePress = val => {
@@ -39,7 +47,6 @@ export default function MyKeyboard() {
           let result;
           const lastChar = value.slice(-1);
 
-          // Check for division by zero
           if (lastChar === '/' && value.split('/').pop() === '0') {
             setValue("Can't divide by zero");
             return;
@@ -104,7 +111,11 @@ export default function MyKeyboard() {
       setLastOperation(null);
       setIsResult(false); // Reset result state
     } else {
-      if (isResult) {
+      if (
+        isResult ||
+        value === 'Format Error' ||
+        value === "Can't divide by zero"
+      ) {
         // If current value is a result, clear it before starting a new calculation
         if (
           val !== '+' &&
@@ -166,7 +177,7 @@ export default function MyKeyboard() {
     }
   }, [history]);
   return (
-    <View style={[Styles.viewBottom, {backgroundColor: colors.background}]}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={Styles.calculationDisplay}>
         <FlatList
           ref={flatListRef}
@@ -179,9 +190,11 @@ export default function MyKeyboard() {
         />
         <View style={styles.currentCalculationContainer}>
           <ScrollView
+            ref={scrollViewRef}
             style={styles.currentCalculationScroll}
             horizontal={true}
-            showsHorizontalScrollIndicator={false}>
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end'}}>
             <Text
               style={[
                 styles.currentCalculationText,
@@ -246,6 +259,11 @@ export default function MyKeyboard() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    paddingBottom: 20,
+  },
   divider: {
     height: 1,
     backgroundColor: 'gray',
@@ -279,7 +297,7 @@ const styles = StyleSheet.create({
   historyText: {
     fontSize: 22,
     color: '#c4c4c4',
-    marginBottom: 2,
+    marginBottom: 10,
     textAlign: 'right',
     width: '100%',
   },

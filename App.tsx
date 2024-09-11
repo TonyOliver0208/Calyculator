@@ -1,11 +1,17 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {SafeAreaView, View, StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import MyKeyboard from './src/components/MyKeyboard';
+import CurrencyConverter from './src/components/Navigation/CurrencyConverter';
+import DateCalculator from './src/components/Navigation/DateCalculator';
 import ThemeToggleButton from './src/components/Navigation/ThemeToggleButton';
-import {ThemeContext, ThemeProvider} from './src/context/ThemeContext';
+import {ThemeProvider, ThemeContext} from './src/context/ThemeContext';
+
+const Tab = createMaterialTopTabNavigator();
 
 function AppContent(): React.JSX.Element {
-  const {colors} = useContext(ThemeContext);
+  const {colors} = React.useContext(ThemeContext);
 
   return (
     <SafeAreaView
@@ -13,9 +19,18 @@ function AppContent(): React.JSX.Element {
       <View style={styles.navbar}>
         <ThemeToggleButton />
       </View>
-      <View style={styles.keyboardContainer}>
-        <MyKeyboard />
-      </View>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarStyle: {backgroundColor: colors.background},
+            tabBarLabelStyle: {color: colors.text},
+            tabBarIndicatorStyle: {backgroundColor: colors.primary},
+          }}>
+          <Tab.Screen name="Calculator" component={MyKeyboard} />
+          <Tab.Screen name="Currency" component={CurrencyConverter} />
+          <Tab.Screen name="Date" component={DateCalculator} />
+        </Tab.Navigator>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
@@ -36,10 +51,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     padding: 10,
-  },
-  keyboardContainer: {
-    flex: 1, // Allow MyKeyboard to take available space
-    justifyContent: 'flex-start', // Align items to the top
+    paddingBottom: 5,
   },
 });
 

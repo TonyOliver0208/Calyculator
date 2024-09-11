@@ -49,10 +49,7 @@ export const Styles = StyleSheet.create({
     right: 10,
   },
   calculationDisplay: {
-    height: 220,
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    marginBottom: 10,
+    flex: 1,
   },
   screenFirstNumber: {
     fontSize: 66,

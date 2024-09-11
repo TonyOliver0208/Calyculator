@@ -6,7 +6,7 @@ type ThemeType = 'light' | 'dark';
 type ThemeContextType = {
   theme: ThemeType;
   setTheme: React.Dispatch<React.SetStateAction<ThemeType>>;
-  colors: typeof myColors.light; // This now includes the error property
+  colors: typeof myColors.light;
 };
 
 export const ThemeContext = createContext<ThemeContextType>({
